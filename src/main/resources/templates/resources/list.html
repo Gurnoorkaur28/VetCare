@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Resources</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/resources">Resources</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Educational Resources for Pet Owners</h1>
+        <ul>
+            <li th:each="resource : ${resources}">
+                <h3 th:text="${resource.title}"></h3>
+                <p th:text="${resource.description}"></p>
+                <a th:href="${resource.url}" target="_blank">Learn More</a>
+            </li>
+        </ul>
+    </main>
+
+    <footer>
+        <!-- Footer content -->
+    </footer>
+</body>
+</html>
