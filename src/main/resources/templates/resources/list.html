@@ -4,30 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Educational Resources</title>
+    <!-- Link to the styles.css file -->
+    <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+    <!-- Header Start -->
     <header>
         <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/resources">Resources</a></li>
+            <ul class="navbar-menu">
+                <li><a href="userhome"><img src="img/logo.png" alt="Logo" class="logo"></a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="resources">Resources</a></li>
+                <li><a href="contact">Contact</a></li>
+
+                <li><a href="profile">Profile</a></li>
+                <li><a href="/logout">Log Out</a></li>
             </ul>
         </nav>
     </header>
+    <!-- Header End -->
 
-    <main>
+    <!-- Main Content Start -->
+    <main class="main-content">
         <h1>Educational Resources for Pet Owners</h1>
         <ul>
             <li th:each="resource : ${resources}">
                 <h3 th:text="${resource.title}"></h3>
                 <p th:text="${resource.description}"></p>
-                <a th:href="${resource.url}" target="_blank">Learn More</a>
+                <a th:href="${resource.url}" target="_blank" class="btn-secondary">Learn More</a>
             </li>
         </ul>
     </main>
+    <!-- Main Content End -->
 
+    <!-- Footer with Social Links -->
     <footer>
-        <!-- Footer content -->
+        <a href="https://www.petmd.com/">PetMD</a>
+        <a href="https://www.aspca.org/">ASPCA</a>
+        <a href="https://www.avma.org/">AVMA</a>
     </footer>
 </body>
 </html>
