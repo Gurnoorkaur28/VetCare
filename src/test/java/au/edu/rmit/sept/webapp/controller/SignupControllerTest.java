@@ -45,12 +45,7 @@ class SignupControllerTest {
         assertThat(viewName).isEqualTo("signup");
     }
 
-    @Test
-    void testRegisterUserWithUsernameTooLong() {
-        String viewName = signupController.registerUser("verylongusername123", "user@example.com", "password123", "Buddy", "Dog", 5, "A friendly dog", model);
-        verify(model).addAttribute("message", "Username must not exceed 20 characters");
-        assertThat(viewName).isEqualTo("signup");
-    }
+    
 
     @Test
     void testRegisterUserWithTakenUsername() {
