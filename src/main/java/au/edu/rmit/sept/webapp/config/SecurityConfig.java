@@ -38,23 +38,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/signup", "/contacts", "/home", "/about", "/resources", "/profile",
-                                "/css/**", "/img/**", "/login", "/vetlogin", "/adminlogin")
-                        .permitAll()
-                        .requestMatchers("/userhome").hasRole("USER")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/vet/**").hasRole("VET")
-                        .requestMatchers("/user/**").hasRole("USER")
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/userhome", true)
-                        .permitAll())
-                .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                .authenticationProvider(authenticationProvider());
+                .formLogin(httpForm -> {
+                    httpForm.loginPage("/login").permitAll();
+                    httpForm.defaultSuccessUrl("/userhome", true);
 
-        return http.build();
+                })
+                .authorizeHttpRequests(registry -> {
+                    registry.requestMatchers("/signup", "/home", "/about", "/contact", "/resources", "/profile",
+                            "/css/**",
+                            "/img/**")
+                            .permitAll(); // Ensure
+                    // static
+                    // resources are
+                    // accessible
+                    registry.anyRequest().authenticated();
+                })
+                .build();
     }
 }
