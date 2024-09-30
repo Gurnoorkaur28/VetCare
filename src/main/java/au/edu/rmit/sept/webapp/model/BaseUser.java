@@ -2,16 +2,30 @@ package au.edu.rmit.sept.webapp.model;
 
 import jakarta.persistence.*;
 
-@Entity
-public class Admin extends BaseUser {
+@MappedSuperclass
+public abstract class BaseUser {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String role;
     private String username;
     private String password;
 
     // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -21,13 +35,13 @@ public class Admin extends BaseUser {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    //
-    // You may need to call the inherited getRole method if you have a role in
-    // BaseUser
-    // If you still want to keep a separate role field, you can define it as follows
-    @Override
+    
     public String getRole() {
-        return super.getRole(); // Call to BaseUser's getRole method
+        return role;
     }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
 }

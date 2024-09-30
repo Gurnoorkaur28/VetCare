@@ -1,10 +1,15 @@
 package au.edu.rmit.sept.webapp.repository;
 
-import au.edu.rmit.sept.webapp.model.Vet;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
-@Repository
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import au.edu.rmit.sept.webapp.model.Vet;
+
 public interface VetRepository extends JpaRepository<Vet, Long> {
+
+    Optional<Vet> findByUsername(String username);
+
     Vet findByEmail(String email);
+
 }

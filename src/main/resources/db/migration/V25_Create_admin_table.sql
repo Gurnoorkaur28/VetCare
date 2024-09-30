@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS admin (
-    admin_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL
 );

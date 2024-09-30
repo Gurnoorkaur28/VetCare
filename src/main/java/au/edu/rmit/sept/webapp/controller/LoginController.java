@@ -24,7 +24,7 @@ public class LoginController {
 
     @Autowired
     @Qualifier("userService")
-    private UserService userDetailsService;
+    private UserService userService; // Assumes UserService handles vet_users, vet, and admin
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,17 +37,33 @@ public class LoginController {
     @PostMapping("/login")
     public String handleLogin(@RequestParam String username, @RequestParam String password, Model model) {
         try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            // Load user details from the corresponding table
+            UserDetails userDetails = userService.loadUserByUsername(username);
+
             if (passwordEncoder.matches(password, userDetails.getPassword())) {
-                // Set authentication context
+                // Authenticate the user
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, password, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                // Log the roles of the authenticated user
-                userDetails.getAuthorities().forEach(authority -> logger.info("Role: " + authority.getAuthority()));
+                // Check the user's role and redirect accordingly
+                String role = userDetails.getAuthorities().stream()
+                        .map(authority -> authority.getAuthority())
+                        .findFirst()
+                        .orElse(null);
 
-                return "redirect:/userhome"; // Redirect to userhome after successful login
+                logger.info("User role: " + role);
+
+                if ("ROLE_ADMIN".equals(role)) {
+                    return "redirect:/adminhome"; // Redirect to admin home
+                } else if ("ROLE_VET".equals(role)) {
+                    return "redirect:/vethome"; // Redirect to vet home
+                } else if ("ROLE_USER".equals(role)) {
+                    return "redirect:/userhome"; // Redirect to general user home
+                } else {
+                    model.addAttribute("error", "Unknown role");
+                    return "login";
+                }
             } else {
                 model.addAttribute("error", "Invalid username or password");
                 return "login"; // Show the error on the login page
@@ -60,7 +76,17 @@ public class LoginController {
 
     @GetMapping("/userhome")
     public String userhome() {
-        return "userhome";
+        return "userhome"; // General user home
+    }
+
+    @GetMapping("/adminhome")
+    public String adminhome() {
+        return "adminhome"; // Admin user home
+    }
+
+    @GetMapping("/vethome")
+    public String vethome() {
+        return "vethome"; // Vet user home
     }
 
     @GetMapping("/home")

@@ -7,38 +7,26 @@ public class Vet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long vetId;
+    private Long id;
 
     private String clinicName;
     private String address;
     private String phoneNumber;
     private String email;
     private String password;
+    private String role;
 
     @ManyToOne
     @JoinColumn(name = "clinic_id", nullable = false)
     private VetBooking vetBooking;
 
-    // Constructors, getters, setters
-    public Vet() {
+    // Getters and setters
+    public Long getId() {
+        return id;
     }
 
-    public Vet(String clinicName, String address, String phoneNumber, String email, String password,
-            VetBooking vetBooking) {
-        this.clinicName = clinicName;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.password = password;
-        this.vetBooking = vetBooking;
-    }
-
-    public Long getVetId() {
-        return vetId;
-    }
-
-    public void setVetId(Long vetId) {
-        this.vetId = vetId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getClinicName() {
@@ -79,6 +67,14 @@ public class Vet {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public VetBooking getVetBooking() {

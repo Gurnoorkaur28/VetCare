@@ -1,58 +1,69 @@
 package au.edu.rmit.sept.webapp.config;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import au.edu.rmit.sept.webapp.service.LoginService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import au.edu.rmit.sept.webapp.service.UserService;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    @Lazy
+    private LoginService loginService;
 
-    public SecurityConfig(@Qualifier("appDetailsService") UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return loginService;
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userService);
-        provider.setPasswordEncoder(passwordEncoder); // Injected password encoder
+        provider.setUserDetailsService(loginService);
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(httpForm -> {
                     httpForm.loginPage("/login").permitAll();
                     httpForm.defaultSuccessUrl("/userhome", true);
-
+                    httpForm.successHandler(customAuthenticationSuccessHandler());
                 })
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/signup", "/home", "/about", "/contact", "/resources", "/profile",
-                            "/css/**",
-                            "/img/**")
-                            .permitAll(); // Ensure
-                    // static
-                    // resources are
-                    // accessible
+                    registry.requestMatchers("/signup", "/contacts", "/home", "/about", "/resources", "/profile",
+                            "/css/**", "/img/**", "/login", "/vetlogin", "/adminlogin").permitAll();
+                    registry.requestMatchers("/userhome").hasRole("USER");
+                    registry.requestMatchers("/vethome").hasRole("VET");
                     registry.anyRequest().authenticated();
                 })
+                .authenticationProvider(authenticationProvider())
                 .build();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return new CustomSuccessHandler();
     }
 }

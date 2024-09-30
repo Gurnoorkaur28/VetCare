@@ -17,33 +17,15 @@ import java.util.Set;
 @Component
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Autowired
-    @Qualifier("appDetailsService")
-    private UserDetailsService appUserService;
-
-    @Autowired
-    @Qualifier("adminUserDetailsService")
-    private UserDetailsService adminUserDetailsService;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        // Custom logic on successful authentication
-        Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-        String redirectUrl = determineRedirectUrl(roles);
-        response.sendRedirect(redirectUrl);
-        request.getSession().setAttribute("role", roles);
-    }
-
-    private String determineRedirectUrl(Set<String> roles) {
-        if (roles.contains("ROLE_ADMIN")) {
-            return "/adminhome";
-        } else if (roles.contains("ROLE_VET")) {
-            return "/vethome";
-        } else if (roles.contains("ROLE_USER")) {
-            return "/userhome";
-        } else {
-            return "/home";
+        String redirectUrl = request.getContextPath();
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_VET"))) {
+            redirectUrl += "/vethome";
+        } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            redirectUrl += "/userhome";
         }
+        response.sendRedirect(redirectUrl);
     }
 }
