@@ -1,6 +1,7 @@
 package au.edu.rmit.sept.webapp.service;
 
 import java.util.List;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,7 @@ import au.edu.rmit.sept.webapp.model.Pet;
 import au.edu.rmit.sept.webapp.model.PrescriptionRequest;
 import au.edu.rmit.sept.webapp.model.User;
 
-@Service
+@Service("appDetailsService") // Ensure the service is named for the qualifier
 public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
@@ -37,6 +38,7 @@ public class UserService implements UserDetailsService {
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password)); // Encode the password
+        user.setRole("ROLE_USER"); // Set the role as USER
         userRepository.save(user);
     }
 
@@ -80,6 +82,7 @@ public class UserService implements UserDetailsService {
             return org.springframework.security.core.userdetails.User.builder()
                     .username(user.getUsername())
                     .password(user.getPassword())
+                    .authorities(Collections.singletonList(() -> user.getRole())) // Use the role from the user entity
                     .build();
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);

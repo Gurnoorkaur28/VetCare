@@ -1,14 +1,33 @@
 package au.edu.rmit.sept.webapp.controller;
 
+import au.edu.rmit.sept.webapp.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.ui.Model;
+
+import java.util.logging.Logger;
 
 @Controller
 public class LoginController {
+
+    private static final Logger logger = Logger.getLogger(LoginController.class.getName());
+
+    @Autowired
+    @Qualifier("userService")
+    private UserService userDetailsService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String login() {
@@ -17,20 +36,26 @@ public class LoginController {
 
     @PostMapping("/login")
     public String handleLogin(@RequestParam String username, @RequestParam String password, Model model) {
-        // Basic error handling for missing or incorrect credentials
-        if (username.isEmpty() || password.isEmpty()) {
-            model.addAttribute("error", "Username and password must be provided");
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (passwordEncoder.matches(password, userDetails.getPassword())) {
+                // Set authentication context
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, password, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // Log the roles of the authenticated user
+                userDetails.getAuthorities().forEach(authority -> logger.info("Role: " + authority.getAuthority()));
+
+                return "redirect:/userhome"; // Redirect to userhome after successful login
+            } else {
+                model.addAttribute("error", "Invalid username or password");
+                return "login"; // Show the error on the login page
+            }
+        } catch (UsernameNotFoundException e) {
+            model.addAttribute("error", "Invalid username or password");
             return "login"; // Show the error on the login page
         }
-
-        // Simulate login logic (replace with real authentication)
-        if (!username.equals("correctUser") || !password.equals("correctPass")) {
-            model.addAttribute("error", "Invalid username or password");
-            return "login";
-        }
-
-        // On successful login, redirect to the user home page
-        return "redirect:/userhome";
     }
 
     @GetMapping("/userhome")

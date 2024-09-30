@@ -16,6 +16,14 @@
     <description>COSC2299 SEPT WebApplication</description>
 
     <dependencies>
+    
+    
+        <dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>4.0.1</version>
+    <scope>provided</scope>
+</dependency>
         <!-- Thymeleaf template engine for Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,7 +59,29 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Spring Security Configuration -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        
+<!-- Add your existing dependencies here -->
 
+<dependency>
+
+    <groupId>org.springframework.security</groupId>
+
+    <artifactId>spring-security-web</artifactId>
+
+    <version>5.7.3</version>
+
+</dependency>
+
+        <!-- Spring Security Web -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
         <!-- MySQL database connector (if needed, otherwise can be removed) -->
         <!-- <dependency>
             <groupId>mysql</groupId>

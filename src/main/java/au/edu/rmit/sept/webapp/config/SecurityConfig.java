@@ -1,66 +1,60 @@
 package au.edu.rmit.sept.webapp.config;
 
-import au.edu.rmit.sept.webapp.service.UserService; // Import your custom UserService
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.beans.factory.annotation.Autowired; // Import the @Autowired annotation
+
+import au.edu.rmit.sept.webapp.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    @Lazy
-    private UserService appUserService; // Ensure the appUserService is autowired correctly
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Bean
-    public UserDetailsService appDetailsService() {
-        return appUserService; // Return your custom UserService
+    public SecurityConfig(@Qualifier("appDetailsService") UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(appUserService);
-        provider.setPasswordEncoder(passwordEncoder()); // Ensure password encoder is set
+        provider.setUserDetailsService(userService);
+        provider.setPasswordEncoder(passwordEncoder); // Injected password encoder
         return provider;
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(httpForm -> {
-                    httpForm.loginPage("/login").permitAll();
-                    httpForm.defaultSuccessUrl("/userhome", true);
-                    httpForm.loginPage("/vetlogin").permitAll();
-                    httpForm.defaultSuccessUrl("/vethome", true);
-                    httpForm.loginPage("/adminlogin").permitAll(); // Admin login page
-                    httpForm.defaultSuccessUrl("/adminhome", true); // Admin home page
-                })
-                .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/signup", "contacts", "/home", "/about", "/resources", "/profile",
-                            "/css/**",
-                            "/img/**")
-                            .permitAll();
-                    registry.requestMatchers("/admin/**").hasRole("ADMIN"); // Restrict admin pages
-                    registry.anyRequest().authenticated();
-                })
-                .build();
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/signup", "/contacts", "/home", "/about", "/resources", "/profile",
+                                "/css/**", "/img/**", "/login", "/vetlogin", "/adminlogin")
+                        .permitAll()
+                        .requestMatchers("/userhome").hasRole("USER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/vet/**").hasRole("VET")
+                        .requestMatchers("/user/**").hasRole("USER")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/userhome", true)
+                        .permitAll())
+                .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .authenticationProvider(authenticationProvider());
+
+        return http.build();
     }
 }

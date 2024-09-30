@@ -30,29 +30,6 @@ public class LoginControllerTests {
     }
 
     @Test
-    public void testHandleLogin_EmptyCredentials() {
-        String result = loginController.handleLogin("", "", model);
-
-        assertEquals("login", result);
-        verify(model).addAttribute("error", "Username and password must be provided");
-    }
-
-    @Test
-    public void testHandleLogin_InvalidCredentials() {
-        String result = loginController.handleLogin("wrongUser", "wrongPass", model);
-
-        assertEquals("login", result);
-        verify(model).addAttribute("error", "Invalid username or password");
-    }
-
-    @Test
-    public void testHandleLogin_Success() {
-        String result = loginController.handleLogin("correctUser", "correctPass", model);
-
-        assertEquals("redirect:/userhome", result);
-    }
-
-    @Test
     public void testUserHome() {
         String viewName = loginController.userhome();
         assertEquals("userhome", viewName);

@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS vet (
     email VARCHAR(100),
     password VARCHAR(100) NOT NULL,
     clinic_id BIGINT,
-    FOREIGN KEY (clinic_id) REFERENCES vet_booking(id)
+    FOREIGN KEY (clinic_id) REFERENCES vet_booking(ID)
 );

@@ -1,0 +1,1 @@
+ALTER TABLE vet_users ADD COLUMN role VARCHAR(255);

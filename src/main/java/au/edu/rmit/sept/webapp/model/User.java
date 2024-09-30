@@ -18,6 +18,7 @@ public class User {
     private String email;
     private String address; // New field
     private String phoneNumber; // New field
+    private String role;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Pet> pets = new HashSet<>(); // Initialize the set
@@ -29,6 +30,7 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     public Long getId() {
@@ -85,5 +87,13 @@ public class User {
 
     public void setPets(Set<Pet> pets) {
         this.pets = pets;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
