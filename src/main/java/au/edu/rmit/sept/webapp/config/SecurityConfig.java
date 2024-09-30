@@ -48,16 +48,14 @@ public class SecurityConfig {
                 .formLogin(httpForm -> {
                     httpForm.loginPage("/login").permitAll();
                     httpForm.defaultSuccessUrl("/userhome", true);
-
+                    httpForm.loginPage("/vetlogin").permitAll();
+                    httpForm.defaultSuccessUrl("/vethome", true);
                 })
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/signup", "contacts", "/home", "/about", "/resources", "/profile",
                             "/css/**",
                             "/img/**")
-                            .permitAll(); // Ensure
-                    // static
-                    // resources are
-                    // accessible
+                            .permitAll(); // Ensure static resources are accessible
                     registry.anyRequest().authenticated();
                 })
                 .build();
