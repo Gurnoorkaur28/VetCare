@@ -50,12 +50,15 @@ public class SecurityConfig {
                     httpForm.defaultSuccessUrl("/userhome", true);
                     httpForm.loginPage("/vetlogin").permitAll();
                     httpForm.defaultSuccessUrl("/vethome", true);
+                    httpForm.loginPage("/adminlogin").permitAll(); // Admin login page
+                    httpForm.defaultSuccessUrl("/adminhome", true); // Admin home page
                 })
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/signup", "contacts", "/home", "/about", "/resources", "/profile",
                             "/css/**",
                             "/img/**")
-                            .permitAll(); // Ensure static resources are accessible
+                            .permitAll();
+                    registry.requestMatchers("/admin/**").hasRole("ADMIN"); // Restrict admin pages
                     registry.anyRequest().authenticated();
                 })
                 .build();

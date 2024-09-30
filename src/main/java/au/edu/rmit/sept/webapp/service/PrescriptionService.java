@@ -26,10 +26,6 @@ public class PrescriptionService {
         return prescriptionRepository.findByRefillStatus("Pending");
     }
 
-    public List<Vet> searchClinics(String query) {
-        return vetRepository.findByClinicNameContainingIgnoreCase(query);
-    }
-
     public Vet findVetById(Long vetId) {
         return vetRepository.findById(vetId).orElse(null);
     }

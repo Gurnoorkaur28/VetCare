@@ -13,16 +13,24 @@ public class Vet {
     private String address;
     private String phoneNumber;
     private String email;
+    private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "clinic_id", nullable = false)
+    private VetBooking vetBooking;
 
     // Constructors, getters, setters
     public Vet() {
     }
 
-    public Vet(String clinicName, String address, String phoneNumber, String email) {
+    public Vet(String clinicName, String address, String phoneNumber, String email, String password,
+            VetBooking vetBooking) {
         this.clinicName = clinicName;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.password = password;
+        this.vetBooking = vetBooking;
     }
 
     public Long getVetId() {
@@ -63,5 +71,21 @@ public class Vet {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public VetBooking getVetBooking() {
+        return vetBooking;
+    }
+
+    public void setVetBooking(VetBooking vetBooking) {
+        this.vetBooking = vetBooking;
     }
 }

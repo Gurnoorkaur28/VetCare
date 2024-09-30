@@ -13,14 +13,19 @@ public class VetService {
     @Autowired
     private VetRepository vetRepository;
 
-    // Method to get all vets
-    public List<Vet> getAllVets() {
+    public Vet findByEmail(String email) {
+        return vetRepository.findByEmail(email);
+    }
+
+    public List<Vet> findAll() {
         return vetRepository.findAll();
     }
 
-    // Method to get a vet by id
-    public Vet getVetById(Long id) {
+    public Vet findById(Long id) {
         return vetRepository.findById(id).orElse(null);
     }
-    
+
+    public void save(Vet vet) {
+        vetRepository.save(vet);
+    }
 }
