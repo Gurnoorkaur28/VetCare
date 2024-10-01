@@ -31,50 +31,49 @@ public class SignupController {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9]).{8,}$");
     private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
 
-    // Display the signup form (no role selection required, defaults to CLIENT)
+    // Display the signup form
     @GetMapping("/signup-client")
     public String showSignupForm(Model model) {
-        return "signup-client"; // Return the client-specific signup view
+        return "signup-client"; // Use the same form for both client and receptionist
     }
 
-    // Handle the client signup form submission
+    // Handle the signup form submission
     @PostMapping("/signup-client")
     public String registerUser(
             @RequestParam String username,
             @RequestParam String email,
             @RequestParam String password,
-            @RequestParam String petName,
-            @RequestParam String petType,
-            @RequestParam int petAge,
-            @RequestParam String petBio,
+            @RequestParam UserRole role, // Role selection between CLIENT and RECEPTIONIST
+            @RequestParam(required = false) String petName, // Optional
+            @RequestParam(required = false) String petType, // Optional
+            @RequestParam(required = false, defaultValue = "-1") int petAge, // Optional
+            @RequestParam(required = false) String petBio, // Optional
             RedirectAttributes redirectAttributes) {
 
         try {
             // Validate email structure
             if (!EMAIL_PATTERN.matcher(email).matches()) {
                 redirectAttributes.addFlashAttribute("message", "Invalid email format");
-                redirectAttributes.addFlashAttribute("success", false); // Indicate failure
+                redirectAttributes.addFlashAttribute("success", false);
                 return "redirect:/signup-client";
             }
 
             // Ensure username length does not exceed 20 characters
             if (username.length() > 20) {
                 redirectAttributes.addFlashAttribute("message", "Username must not exceed 20 characters");
-                redirectAttributes.addFlashAttribute("success", false); // Indicate failure
+                redirectAttributes.addFlashAttribute("success", false);
                 return "redirect:/signup-client";
             }
 
-            // Check if username is taken
+            // Check if username or email is taken
             if (userService.isUsernameTaken(username)) {
                 redirectAttributes.addFlashAttribute("message", "Username is already taken");
-                redirectAttributes.addFlashAttribute("success", false); // Indicate failure
+                redirectAttributes.addFlashAttribute("success", false);
                 return "redirect:/signup-client";
             }
-
-            // Check if email is taken
             if (userService.isEmailTaken(email)) {
                 redirectAttributes.addFlashAttribute("message", "Email is already taken");
-                redirectAttributes.addFlashAttribute("success", false); // Indicate failure
+                redirectAttributes.addFlashAttribute("success", false);
                 return "redirect:/signup-client";
             }
 
@@ -82,52 +81,38 @@ public class SignupController {
             if (!PASSWORD_PATTERN.matcher(password).matches()) {
                 redirectAttributes.addFlashAttribute("message",
                         "Password must be at least 8 characters long and contain at least one number");
-                redirectAttributes.addFlashAttribute("success", false); // Indicate failure
+                redirectAttributes.addFlashAttribute("success", false);
                 return "redirect:/signup-client";
             }
 
-            // Validate pet age
-            if (petAge < 0 || petAge > 20) {
-                redirectAttributes.addFlashAttribute("message", "Pet age must be between 0 and 20 years");
-                redirectAttributes.addFlashAttribute("success", false); // Indicate failure
-                return "redirect:/signup-client";
-            }
+            // Register the user with the selected role
+            userService.registerUser(username, email, password, role);
 
-            // Register the user as CLIENT (no role selection needed)
-            UserRole clientRole = UserRole.CLIENT; // Fixed role for client signup
-            userService.registerUser(username, email, password, clientRole); // Register user with CLIENT role
-
-            // Find the newly registered user by email
+            // Find the newly registered user
             User user = userService.findUserByEmail(email);
             if (user == null) {
                 redirectAttributes.addFlashAttribute("message", "User not found");
-                redirectAttributes.addFlashAttribute("success", false); // Indicate failure
+                redirectAttributes.addFlashAttribute("success", false);
                 return "redirect:/signup-client";
             }
 
-            logger.info("User found: {}", user);
-
-            // Initialize user's pets set if null
-            if (user.getPets() == null) {
-                user.setPets(new HashSet<>());
+            // If role is client or receptionist and pet details are provided, register the pet
+            if (role == UserRole.CLIENT || role == UserRole.RECEPTIONIST) {
+                if (petName != null && petType != null && petAge != -1) {
+                    Pet newPet = new Pet(petName, petType, petAge, petBio, user);
+                    user.getPets().add(newPet);
+                    petService.addPet(newPet);
+                }
             }
 
-            // Create and register new pet
-            Pet newPet = new Pet(petName, petType, petAge, petBio, user);
-            logger.info("Creating new pet: {}", newPet);
-
-            user.getPets().add(newPet);
-            petService.addPet(newPet);
-
-            // Add confirmation message before redirecting to the client login page
-            redirectAttributes.addFlashAttribute("message", "User and pet registered successfully!");
-            redirectAttributes.addFlashAttribute("success", true); // Indicate success
+            redirectAttributes.addFlashAttribute("message", "User registered successfully!");
+            redirectAttributes.addFlashAttribute("success", true);
             return "redirect:/login-client";
 
         } catch (Exception e) {
             logger.error("Registration failed", e);
             redirectAttributes.addFlashAttribute("message", "Registration failed: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("success", false); // Indicate failure
+            redirectAttributes.addFlashAttribute("success", false);
             return "redirect:/signup-client";
         }
     }

@@ -52,7 +52,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity; consider re-enabling in production
             .authorizeHttpRequests(registry -> {
                 // Open access for public resources and role selection page
-                registry.requestMatchers("/vetcaresystemhome", "/vetcaresystemhome/selectrole", "/signup-client", "/home", "/about", "/resources", "/css/**", "/img/**").permitAll();
+                registry.requestMatchers("/vetcaresystemhome", "/vetcaresystemhome/selectrole", "/signup-client", "/signup-admin", "/home", "/about", "/resources", "/css/**", "/img/**").permitAll();
 
                 // Define access control for different roles after login
                 registry.requestMatchers("/receptionisthome/").hasRole("RECEPTIONIST");
@@ -67,6 +67,9 @@ public class SecurityConfig {
                 // Define custom login pages for different roles
                 httpForm.loginPage("/login-client").permitAll(); // Allow all users to access the login page
                 httpForm.successHandler(customSuccessHandler()); // Use the custom success handler
+            })
+            .exceptionHandling(exceptionHandling -> {
+                exceptionHandling.accessDeniedPage("/403"); // Redirect to access denied page for unauthorized access
             });
 
         return httpSecurity.build(); // Finalize the SecurityFilterChain

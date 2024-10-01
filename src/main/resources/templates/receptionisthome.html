@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptionist Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS file -->
+    <style>
+        /* Example styles for simplicity, replace with your external styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 24px;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        .dashboard-item {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-item h3 {
+            margin-top: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Receptionist Dashboard
+</header>
+
+<div class="container">
+    <!-- Upcoming Appointments Section -->
+    <div class="dashboard-item">
+        <h3>Upcoming Appointments</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Client Name</th>
+                    <th>Pet Name</th>
+                    <th>Appointment Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>Buddy</td>
+                    <td>10:30 AM</td>
+                    <td>Scheduled</td>
+                    <td>
+                        <button>Check In</button>
+                        <button>Cancel</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>Milo</td>
+                    <td>11:00 AM</td>
+                    <td>Scheduled</td>
+                    <td>
+                        <button>Check In</button>
+                        <button>Cancel</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Manage Schedule Section -->
+    <div class="dashboard-item">
+        <h3>Manage Schedule</h3>
+        <p>Use the buttons below to free up or block time slots.</p>
+        <button>Free Up Slot</button>
+        <button>Block Slot</button>
+    </div>
+
+    <!-- Client Information Section -->
+    <div class="dashboard-item">
+        <h3>Search Client Information</h3>
+        <input type="text" placeholder="Search by client name or pet name" style="width: 100%; padding: 12px; margin-bottom: 10px;">
+        <button>Search</button>
+    </div>
+
+    <!-- Log Out Section -->
+    <div class="dashboard-item">
+        <button onclick="window.location.href='/logout'">Log Out</button>
+    </div>
+</div>
+
+</body>
+</html>
