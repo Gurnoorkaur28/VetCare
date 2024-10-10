@@ -2,6 +2,7 @@ package au.edu.rmit.sept.webapp.controller;
 
 import au.edu.rmit.sept.webapp.model.PrescriptionRequest;
 import au.edu.rmit.sept.webapp.model.User;
+import au.edu.rmit.sept.webapp.SecurityUtil;
 import au.edu.rmit.sept.webapp.model.Pet;
 import au.edu.rmit.sept.webapp.service.PrescriptionRequestService;
 import au.edu.rmit.sept.webapp.service.UserService;
@@ -33,6 +34,9 @@ public class PrescriptionController {
 
     @GetMapping("/prescription-management")
     public String showRequestFormAndPrescriptions(Model model) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         // Get the logged-in user's username
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
@@ -62,6 +66,9 @@ public class PrescriptionController {
     public String requestPrescription(@RequestParam String medication,
             @RequestParam String reason,
             @RequestParam Long petId) {
+                if (!SecurityUtil.hasRole("CLIENT")) {
+                    return "403";  // Redirect to access denied page if not CLIENT
+                }
         // Get the logged-in user's username
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;

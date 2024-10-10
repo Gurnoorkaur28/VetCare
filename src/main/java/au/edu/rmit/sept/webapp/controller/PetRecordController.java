@@ -1,4 +1,5 @@
 package au.edu.rmit.sept.webapp.controller;
+import au.edu.rmit.sept.webapp.SecurityUtil;
 
 import au.edu.rmit.sept.webapp.model.PetRecord;
 import au.edu.rmit.sept.webapp.service.PetRecordService;
@@ -17,6 +18,9 @@ public class PetRecordController {
 
     @GetMapping
     public String getAllRecords(Model model) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         model.addAttribute("records", petRecordService.getAllPetRecords());
         return "records"; // This corresponds to records.html
     }
@@ -24,6 +28,9 @@ public class PetRecordController {
     // Serve the new record form page
     @GetMapping("/new")
     public String showNewRecordForm(Model model) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         PetRecord petRecord = new PetRecord();
         model.addAttribute("petRecord", petRecord);
         return "new_record"; // This corresponds to new_record.html
@@ -32,6 +39,9 @@ public class PetRecordController {
     // Handle form submission to save the new pet record
     @PostMapping("/save")
     public String saveRecord(@ModelAttribute("petRecord") PetRecord petRecord) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         petRecordService.save(petRecord);
         return "redirect:/records"; // Redirect to records list after saving
     }
@@ -39,6 +49,9 @@ public class PetRecordController {
     // Serve the edit record form page
     @GetMapping("/edit/{id}")
     public String showEditRecordForm(@PathVariable Long id, Model model) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         PetRecord petRecord = petRecordService.getPetRecordById(id);
         model.addAttribute("petRecord", petRecord);
         return "edit_record"; // This corresponds to edit_record.html
@@ -47,6 +60,9 @@ public class PetRecordController {
     // Handle form submission to update an existing pet record
     @PostMapping("/update/{id}")
     public String updateRecord(@PathVariable Long id, @ModelAttribute("petRecord") PetRecord petRecord) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         PetRecord existingRecord = petRecordService.getPetRecordById(id);
 
         if (existingRecord != null) {
@@ -73,6 +89,9 @@ public class PetRecordController {
     // Delete a pet record
     @GetMapping("/delete/{id}")
     public String deleteRecord(@PathVariable Long id) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         PetRecord record = petRecordService.getPetRecordById(id);
 
         if (record != null) {

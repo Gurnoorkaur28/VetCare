@@ -1,5 +1,6 @@
 package au.edu.rmit.sept.webapp.controller;
 
+import au.edu.rmit.sept.webapp.SecurityUtil;
 import au.edu.rmit.sept.webapp.model.User;
 import au.edu.rmit.sept.webapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String showProfile(Model model) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         // Get the logged-in user's username
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
@@ -47,6 +51,9 @@ public class ProfileController {
 
     @GetMapping("/edit-user")
     public String showEditUserForm(Model model) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
+            return "403";  // Redirect to access denied page if not CLIENT
+        }
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
 
@@ -71,6 +78,9 @@ public class ProfileController {
             @RequestParam String address,
             @RequestParam String phoneNumber,
             RedirectAttributes redirectAttributes) { // Use RedirectAttributes here
+                if (!SecurityUtil.hasRole("CLIENT")) {
+                    return "403";  // Redirect to access denied page if not CLIENT
+                }
         try {
             User user = userService.findById(userId); // Assume you have this method
             if (user == null) {
