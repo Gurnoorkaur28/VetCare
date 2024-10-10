@@ -1,4 +1,5 @@
 package au.edu.rmit.sept.webapp.controller;
+import au.edu.rmit.sept.webapp.SecurityUtil;
 
 import java.util.Collection; // Correct import for java.util.Collection
 import au.edu.rmit.sept.webapp.model.enums.UserRole;
@@ -64,7 +65,7 @@ public class LoginController {
     
     @GetMapping("/userhome")
     public ModelAndView userHome() {
-        if (!hasRole("CLIENT")) {
+        if (!SecurityUtil.hasRole("CLIENT")) {
             return new ModelAndView("403");  // Redirect to access denied page if not CLIENT
         }
         return new ModelAndView("userhome");
@@ -73,23 +74,10 @@ public class LoginController {
    
     @GetMapping("/receptionisthome")
     public ModelAndView receptionistHome() {
-        if (!hasRole("RECEPTIONIST")) {
+        if (!SecurityUtil.hasRole("RECEPTIONIST")) {
             return new ModelAndView("403");  // Redirect to access denied page if not RECEPTIONIST
         }
         return new ModelAndView("receptionisthome");
     }
 
-    // Method to check role of the logged-in user
-    private boolean hasRole(String role) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getAuthorities() != null) {
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            for (GrantedAuthority authority : authorities) {
-                if (authority.getAuthority().equals(role)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }
