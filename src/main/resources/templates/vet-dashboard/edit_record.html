@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create New Pet Record</title>
+    <title>Edit Pet Record</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <script>
         function validateForm() {
@@ -64,57 +64,57 @@
 
     <main>
         <section class="pet-record-form">
-            <h1>Create New Pet Record</h1>
-            <form name="petRecordForm" th:action="@{/vet/records/save}" method="post" onsubmit="return validateForm()" class="form-container">
+            <h1>Edit Pet Record</h1>
+            <form name="petRecordForm" th:action="@{/vet/records/update/{id}(id=${petRecord.id})}" method="post" onsubmit="return validateForm()" class="form-container">
                 <label for="name">Pet Name:</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" th:value="${petRecord.name}" required>
 
                 <label for="breed">Breed:</label>
-                <input type="text" id="breed" name="breed" required>
+                <input type="text" id="breed" name="breed" th:value="${petRecord.breed}" required>
 
                 <label for="dateOfBirth">Date of Birth:</label>
-                <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                <input type="date" id="dateOfBirth" name="dateOfBirth" th:value="${petRecord.dateOfBirth}" required>
 
                 <label for="veterinarian">Veterinarian:</label>
-                <input type="text" id="veterinarian" name="veterinarian" required>
+                <input type="text" id="veterinarian" name="veterinarian" th:value="${petRecord.veterinarian}" required>
 
                 <label for="vetId">Vet:</label>
-                <select id="vetId" name="vetId" required th:field="*{vetId}">
-                    <option value="" disabled selected>Select a Vet</option>
-                    <option th:each="vet : ${vets}" th:value="${vet.vetId}" th:text="${vet.clinicName}"></option>
+                <select id="vetId" name="vetId" required>
+                    <option value="" disabled>Select a Vet</option>
+                    <option th:each="vet : ${vets}" th:value="${vet.vetId}" th:text="${vet.clinicName}" th:selected="${vet.vetId == petRecord.vet?.vetId}"></option>
                 </select>
 
                 <label for="userId">User:</label>
-                <select id="userId" name="userId" required th:field="*{userId}">
-                    <option value="" disabled selected>Select a User</option>
-                    <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+                <select id="userId" name="userId" required>
+                    <option value="" disabled>Select a User</option>
+                    <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}" th:selected="${user.id == petRecord.user?.id}"></option>
                 </select>
 
                 <label for="lastVisit">Last Visit:</label>
-                <input type="date" id="lastVisit" name="lastVisit">
+                <input type="date" id="lastVisit" name="lastVisit" th:value="${petRecord.lastVisit}">
 
                 <label for="allergies">Allergies:</label>
-                <input type="text" id="allergies" name="allergies">
+                <input type="text" id="allergies" name="allergies" th:value="${petRecord.allergies}">
 
                 <label for="prescriptions">Prescriptions:</label>
-                <input type="text" id="prescriptions" name="prescriptions">
+                <input type="text" id="prescriptions" name="prescriptions" th:value="${petRecord.prescriptions}">
 
                 <label for="vaccinationHistory">Vaccination History:</label>
-                <textarea id="vaccinationHistory" name="vaccinationHistory"></textarea>
+                <textarea id="vaccinationHistory" name="vaccinationHistory" th:text="${petRecord.vaccinationHistory}"></textarea>
 
                 <label for="recentTests">Recent Tests:</label>
-                <input type="text" id="recentTests" name="recentTests">
+                <input type="text" id="recentTests" name="recentTests" th:value="${petRecord.recentTests}">
 
                 <label for="recentSurgeries">Recent Surgeries:</label>
-                <input type="text" id="recentSurgeries" name="recentSurgeries">
+                <input type="text" id="recentSurgeries" name="recentSurgeries" th:value="${petRecord.recentSurgeries}">
 
                 <label for="dietaryRecommendations">Dietary Recommendations:</label>
-                <input type="text" id="dietaryRecommendations" name="dietaryRecommendations">
+                <input type="text" id="dietaryRecommendations" name="dietaryRecommendations" th:value="${petRecord.dietaryRecommendations}">
 
                 <label for="notes">Notes:</label>
-                <textarea id="notes" name="notes"></textarea>
+                <textarea id="notes" name="notes" th:text="${petRecord.notes}"></textarea>
 
-                <button type="submit" class="btn-primary">Save Record</button>
+                <button type="submit" class="btn-primary">Update Record</button>
             </form>
         </section>
     </main>

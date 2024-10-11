@@ -1,9 +1,6 @@
 package au.edu.rmit.sept.webapp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class PetRecord {
@@ -24,17 +21,23 @@ public class PetRecord {
     private String dietaryRecommendations;
     private String notes;
     private String veterinarian;
-    private String owner;
-    private Long clinicId; // Add clinicId field
 
-    // Constructors
+    @ManyToOne
+    @JoinColumn(name = "vet_id")
+    private Vet vet; // Reference to Vet entity
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user; // User entity as a foreign key
+
+    // Constructors, getters, and setters
+
     public PetRecord() {
     }
 
     public PetRecord(String name, String breed, String dateOfBirth, String lastVisit, String allergies,
-            String prescriptions, String vaccinationHistory, String recentTests,
-            String recentSurgeries, String dietaryRecommendations, String notes,
-            String veterinarian, String owner, Long clinicId) {
+            String prescriptions, String vaccinationHistory, String recentTests, String recentSurgeries,
+            String dietaryRecommendations, String notes, String veterinarian, Vet vet, User user) {
         this.name = name;
         this.breed = breed;
         this.dateOfBirth = dateOfBirth;
@@ -47,11 +50,10 @@ public class PetRecord {
         this.dietaryRecommendations = dietaryRecommendations;
         this.notes = notes;
         this.veterinarian = veterinarian;
-        this.owner = owner;
-        this.clinicId = clinicId; // Set clinicId
+        this.vet = vet;
+        this.user = user;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -156,19 +158,19 @@ public class PetRecord {
         this.veterinarian = veterinarian;
     }
 
-    public String getOwner() {
-        return owner;
+    public Vet getVet() {
+        return vet;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setVet(Vet vet) {
+        this.vet = vet;
     }
 
-    public Long getClinicId() {
-        return clinicId;
+    public User getUser() {
+        return user;
     }
 
-    public void setClinicId(Long clinicId) {
-        this.clinicId = clinicId;
+    public void setUser(User user) {
+        this.user = user;
     }
 }
