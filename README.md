@@ -6,12 +6,10 @@
 ## Group-P04-03
 
 ## Members
-* Harmandeep Singh (s4009171)
-* Gurnoor Kaur (s3991487)
-* Fazila Qurban Ali (s3667195)
-* Krishitaa purusothaman (s3962111)
-* Ninh Duy Huynh (s4003174)
-* Mohamed Bilal Naeem (s3967700)
+* Harmandeep Singh
+* Gurnoor Kaur 
+* Krishitaa purusothaman 
+* Ninh Duy Huynh
 
 ## Records
 
